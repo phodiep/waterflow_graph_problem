@@ -33,6 +33,7 @@ class Terrain(object):
 	def __init__(self,fullTerrain):
 		self.fullTerrain = fullTerrain
 		self.allPossiblePaths = []
+		self.pathsInProgress = []
 		self.cache = {}
 
 	def validPointOnTerrain(self, point):
@@ -69,10 +70,10 @@ class Terrain(object):
 			print("can't find path")
 
 		#if path is null, create one
-		if len(self.allPossiblePaths) == 0:
+		if len(self.pathsInProgress) == 0:
 			path = Path()
 			path.path = [point]
-			self.allPossiblePaths = [path]
+			self.pathsInProgress = [path]
 
 		stillNeedToExplore = True
 		while (stillNeedToExplore):
@@ -82,23 +83,25 @@ class Terrain(object):
 	def findPaths(self):
 		foundMorePaths = False
 
-		for i in range(0, len(self.allPossiblePaths)):
-			point = self.allPossiblePaths[i].getLastPoint()
+		for i in range(len(self.pathsInProgress)-1,-1,-1):
+			point = self.pathsInProgress[i].getLastPoint()
 			
 			#get all possible next steps, and create copies of original path if more than one
 			nextSteps = self.findNextSteps(point)
 
 			#no steps found
 			if len(nextSteps) == 0:
+				self.allPossiblePaths.append(self.pathsInProgress[i])
+				self.pathsInProgress.pop(i)
 				continue
 
 			#one or more paths found
-			currentPath = list(self.allPossiblePaths[i].path)
+			currentPath = list(self.pathsInProgress[i].path)
 			foundMorePaths = True
 
 			for j in range(0, len(nextSteps)):
 				if j == 0:
-					self.allPossiblePaths[i].travelTo(nextSteps[j])
+					self.pathsInProgress[i].travelTo(nextSteps[j])
 					continue
 
 				tempPath = Path()
