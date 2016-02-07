@@ -52,7 +52,7 @@ class Terrain(object):
 			#print ("invalid starting point: x="+str(point.x))
 			return False
 
-		if len(self.fullTerrain[0]) <= point.y:
+		if len(self.fullTerrain[point.x]) <= point.y:
 			#print ("invalid starting point: y="+str(point.y))
 			return False
 
